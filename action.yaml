@@ -26,8 +26,8 @@ runs:
     - name: Get publish info
       id: publish-info
       run: >
-        python3 ${{github.action_path}}/scripts/github-info.py
-        ${{ inputs.github_token }}
+        python3 ${{ github.action_path }}/scripts/publish_info.py
+        ${{ inputs.github-token }}
         ${{ github.repository }}
       shell: bash
 
@@ -38,13 +38,13 @@ runs:
 
     - name: Get release info
       id: release-info
-      if: steps.publish-info.outputs.should-publish == true
+      if: ${{ steps.publish-info.outputs.should-publish == true }}
       run: >
-        python3 ${{github.action_path}}/scripts/publish-info.py
+        python3 ${{ github.action_path }}/scripts/release_info.py
         ${{ steps.publish-info.outputs.version }}
       shell: bash
 
-    - if: steps.publish-info.outputs.should-publish == true
+    - if: ${{ steps.publish-info.outputs.should-publish == true }}
       run: |
         echo release-notes=$RELEASE_NOTES
       shell: bash
@@ -52,7 +52,7 @@ runs:
         RELEASE_NOTES: ${{ steps.release-info.outputs.release-notes }}
 
     - name: Publish GitHub release
-      if: steps.publish-info.outputs.should-publish == true
+      if: ${{ steps.publish-info.outputs.should-publish == true }}
       run: >
         gh release create
         ${{ steps.publish-info.outputs.version }}
@@ -60,4 +60,4 @@ runs:
         --notes ${{ steps.release-info.outputs.release-notes }}
       shell: bash
       env:
-        GITHUB_TOKEN: ${{ inputs.github_token }}
+        GITHUB_TOKEN: ${{ inputs.github-token }}
