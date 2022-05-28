@@ -29,6 +29,7 @@ runs:
         python3 ${{github.action_path}}/scripts/github-info.py
         ${{ inputs.github_token }}
         ${{ github.repository }}
+      shell: bash
 
     - run: |
         echo version=${{ steps.publish-info.outputs.version }}
