@@ -16,7 +16,7 @@ jobs:
   github-publish:
     runs-on: ubuntu-latest
     steps:
-      - use: alirezatheh/github-auto-publish@v1
+      - uses: alirezatheh/github-auto-publish@v1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           files: ./dist/*.zip
