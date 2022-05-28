@@ -1,5 +1,3 @@
-from pathlib import Path
-
 import keepachangelog
 import typer
 from packaging.version import Version
@@ -10,9 +8,7 @@ def get_release_notes(version: Version) -> str:
     """
     Gets version release notes.
     """
-    changelog = keepachangelog.to_raw_dict(
-        str(Path(__file__).parent.parent / 'CHANGELOG.md')
-    )
+    changelog = keepachangelog.to_raw_dict('CHANGELOG.md')
     return changelog[str(version)]['raw'].strip()
 
 
