@@ -94,7 +94,7 @@ def main(
             'Hint: Make new changes, edit `CHANGELOG.md` and other '
             'version files. Then bump version to a new version. '
             '(Maybe you want to use '
-            'https://github.com/alirezatheh/bump-version).'
+            'https://github.com/alirezatheh/auto-bump-versions).'
         )
         typer.Exit(code=1)
 
@@ -110,7 +110,7 @@ def main(
         typer.secho(
             'Hint: Make unreleased changes a part of current version '
             'or bump version to a new version. (Maybe you want to use '
-            'https://github.com/alirezatheh/bump-version).'
+            'https://github.com/alirezatheh/auto-bump-versions).'
         )
         typer.Exit(code=1)
 
