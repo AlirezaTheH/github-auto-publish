@@ -82,8 +82,7 @@ def main(
         )
         typer.Exit(code=1)
 
-    set_output('version', f'{local_version}')
-    set_output('should-publish', True)
+    set_output('version', f'v{local_version}')
 
 
 if __name__ == '__main__':

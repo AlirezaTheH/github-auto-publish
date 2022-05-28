@@ -15,12 +15,15 @@ inputs:
   files:
     description: Files to be uploaded as release assets.
     required: false
+    default: ''
 
 runs:
   using: composite
   steps:
     - name: Install dependencies
-      run: python3 -m pip install -r ${{ github.action_path }}/requirements/main.txt
+      run: >
+        python3 -m pip install
+        -r ${{ github.action_path }}/requirements/main.txt
       shell: bash
 
     - name: Get publish info
@@ -31,33 +34,29 @@ runs:
         ${{ github.repository }}
       shell: bash
 
-    - run: |
-        echo version=${{ steps.publish-info.outputs.version }}
-        echo should-publish=${{ steps.publish-info.outputs.should-publish }}
+    - run: echo version=${{ steps.publish-info.outputs.version }}
       shell: bash
 
     - name: Get release info
       id: release-info
-      if: ${{ steps.publish-info.outputs.should-publish == true }}
       run: >
         python3 ${{ github.action_path }}/scripts/release_info.py
         ${{ steps.publish-info.outputs.version }}
       shell: bash
 
-    - if: ${{ steps.publish-info.outputs.should-publish == true }}
-      run: |
+    - run: |
         echo release-notes=$RELEASE_NOTES
       shell: bash
       env:
         RELEASE_NOTES: ${{ steps.release-info.outputs.release-notes }}
 
     - name: Publish GitHub release
-      if: ${{ steps.publish-info.outputs.should-publish == true }}
       run: >
         gh release create
         ${{ steps.publish-info.outputs.version }}
         {{ inputs.files }}
-        --notes ${{ steps.release-info.outputs.release-notes }}
+        --title "${{ steps.publish-info.outputs.version }}"
+        --notes "${{ steps.release-info.outputs.release-notes }}"
       shell: bash
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
