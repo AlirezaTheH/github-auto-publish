@@ -37,18 +37,11 @@ runs:
     - run: echo version=${{ steps.publish-info.outputs.version }}
       shell: bash
 
-    - name: Get release info
-      id: release-info
+    - name: Create release notes
       run: >
-        python3 ${{ github.action_path }}/scripts/release_info.py
+        python3 ${{ github.action_path }}/scripts/create_release_notes.py
         ${{ steps.publish-info.outputs.version }}
       shell: bash
-
-    - run: |
-        echo release-notes=$RELEASE_NOTES
-      shell: bash
-      env:
-        RELEASE_NOTES: ${{ steps.release-info.outputs.release-notes }}
 
     - name: Publish GitHub release
       run: >
@@ -56,7 +49,7 @@ runs:
         ${{ steps.publish-info.outputs.version }}
         ${{ inputs.files }}
         --title "${{ steps.publish-info.outputs.version }}"
-        --notes "${{ steps.release-info.outputs.release-notes }}"
+        --notes-file RELEASE_NOTES.md
       shell: bash
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}

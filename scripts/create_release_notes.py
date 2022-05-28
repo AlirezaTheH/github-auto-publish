@@ -1,7 +1,6 @@
 import keepachangelog
 import typer
 from packaging.version import Version
-from utils import set_output
 
 
 def get_release_notes(version: Version) -> str:
@@ -22,7 +21,8 @@ def main(version: str) -> None:
         Version release notes
     """
     release_notes = get_release_notes(Version(version))
-    set_output('release-notes', release_notes)
+    with open('RELEASE_NOTES.md', 'w') as f:
+        f.write(release_notes)
 
 
 if __name__ == '__main__':

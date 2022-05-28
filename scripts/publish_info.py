@@ -1,11 +1,10 @@
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Union
 
 import keepachangelog
 import typer
 from github import Github
 from keepachangelog._versioning import initial_semantic_version, to_semantic
 from packaging.version import Version
-from utils import set_output
 
 
 def _actual_version(changelog: dict) -> Tuple[Optional[str], dict]:
@@ -21,6 +20,20 @@ def _actual_version(changelog: dict) -> Tuple[Optional[str], dict]:
         return versions[-1]
 
     return None, initial_semantic_version.copy()
+
+
+def _normalize_value(value: Union[str, bool]) -> str:
+    if isinstance(value, str):
+        return value
+    elif isinstance(value, bool):
+        return 'true' if value else 'false'
+
+
+def set_output(name: str, value: Union[str, bool]) -> None:
+    """
+    Sets GitHub action output.
+    """
+    typer.echo(f'::set-output name={name}::{_normalize_value(value)}')
 
 
 def get_local_version() -> Version:
