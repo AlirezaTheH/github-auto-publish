@@ -1,0 +1,57 @@
+name: GitHub Auto Publish
+description: >
+  Automate publish a GitHub release if find an unpublished version in
+  `CHANGELOG.md` (`Keep a Changelog` format).
+author: Alireza Hosseini
+branding:
+  icon: upload-cloud
+  color: green
+
+inputs:
+  github-token:
+    description: GitHub token.
+    required: true
+
+  files:
+    description: Files to be uploaded as release assets.
+    required: false
+
+runs:
+  using: composite
+  steps:
+    - name: Install dependencies
+      run: python3 -m pip install -r ${{ github.action_path }}/requirements/main.txt
+
+    - name: Get publish info
+      id: publish-info
+      run: >
+        python3 ${{github.action_path}}/scripts/github-info.py
+        ${{ inputs.github_token }}
+        ${{ github.repository }}
+
+    - run: |
+        echo version=${{ steps.publish-info.outputs.version }}
+        echo should-publish=${{ steps.publish-info.outputs.should-publish }}
+
+    - name: Get release info
+      id: release-info
+      if: steps.publish-info.outputs.should-publish == true
+      run: >
+        python3 ${{github.action_path}}/scripts/publish-info.py
+        ${{ steps.publish-info.outputs.version }}
+
+    - if: steps.publish-info.outputs.should-publish == true
+      run: |
+        echo release-notes=$RELEASE_NOTES
+      env:
+        RELEASE_NOTES: ${{ steps.release-info.outputs.release-notes }}
+
+    - name: Publish GitHub release
+      if: steps.publish-info.outputs.should-publish == true
+      run: >
+        gh release create
+        ${{ steps.publish-info.outputs.version }}
+        {{ inputs.files }}
+        --notes ${{ steps.release-info.outputs.release-notes }}
+      env:
+        GITHUB_TOKEN: ${{ inputs.github_token }}
