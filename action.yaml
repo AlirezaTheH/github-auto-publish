@@ -54,7 +54,7 @@ runs:
       run: >
         gh release create
         ${{ steps.publish-info.outputs.version }}
-        {{ inputs.files }}
+        ${{ inputs.files }}
         --title "${{ steps.publish-info.outputs.version }}"
         --notes "${{ steps.release-info.outputs.release-notes }}"
       shell: bash
