@@ -49,18 +49,6 @@ def get_github_version(token: str, repository_name: str) -> Version:
     return Version('0.0.0')
 
 
-def compare_local_version_with_head(
-    token: str, repository_name: str, local_version: Version
-) -> str:
-    """
-    Compares current local version with HEAD.
-    """
-    github = Github(token)
-    repo = github.get_repo(repository_name)
-    comparison = repo.compare(f'v{local_version}', 'HEAD')
-    return comparison.status
-
-
 def main(
     github_token: str,
     github_repository: str,
@@ -90,22 +78,6 @@ def main(
             'Hint: Make new changes, edit `CHANGELOG.md` and other '
             'version files. Then bump version to a new version. '
             '(Maybe you want to use '
-            'https://github.com/alirezatheh/auto-bump-versions).'
-        )
-        typer.Exit(code=1)
-
-    status = compare_local_version_with_head(
-        github_token, github_repository, local_version
-    )
-    if status == 'ahead':
-        typer.secho(
-            'Error: You have unreleased changes after current local version.',
-            err=True,
-            fg='red',
-        )
-        typer.secho(
-            'Hint: Make unreleased changes a part of current version '
-            'or bump version to a new version. (Maybe you want to use '
             'https://github.com/alirezatheh/auto-bump-versions).'
         )
         typer.Exit(code=1)
