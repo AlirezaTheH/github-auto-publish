@@ -34,7 +34,8 @@ runs:
         ${{ github.repository }}
       shell: bash
 
-    - run: echo version=${{ steps.publish-info.outputs.version }}
+    - name: Show new version
+      run: echo version=${{ steps.publish-info.outputs.version }}
       shell: bash
 
     - name: Create release notes
