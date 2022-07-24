@@ -1,4 +1,3 @@
-import keepachangelog
 import typer
 from packaging.version import Version
 
@@ -7,8 +6,30 @@ def get_release_notes(version: Version) -> str:
     """
     Gets version release notes.
     """
-    changelog = keepachangelog.to_raw_dict('CHANGELOG.md')
-    return changelog[str(version)]['raw'].strip()
+    version_found = False
+    result = ''
+    with open('CHANGELOG.md') as f:
+        for line in f:
+            if line.startswith('## '):
+                if result:
+                    break
+
+                release_line = line[3:].lower().strip()
+                current_version, release_date = (
+                    release_line.split(maxsplit=1)
+                    if ' ' in release_line
+                    else (release_line, None)
+                )
+                if release_date and current_version[1:-1] == str(version):
+                    version_found = True
+
+            elif version_found:
+                if line.startswith('  '):
+                    result = result.rstrip()
+                    line = line[1:]
+                result += line
+
+    return f'{result.strip()}\n'
 
 
 def main(version: str) -> None:
